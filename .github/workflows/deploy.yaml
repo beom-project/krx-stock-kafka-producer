@@ -36,7 +36,6 @@ jobs:
         
     - name: Build and push
       run: |
-        chmod +x Dockerfile
         docker buildx create --use
         docker buildx build -f ./Dockerfile --tag ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest
         
