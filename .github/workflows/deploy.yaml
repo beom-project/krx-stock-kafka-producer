@@ -37,8 +37,5 @@ jobs:
     - name: Build and push
       run: |
         docker buildx create --use
-        docker buildx build -t ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer -f ./DockerFile .
+        docker buildx build -t ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer -f ./DockerFile . --push
         
-    - name: Push the Docker image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest
-  
