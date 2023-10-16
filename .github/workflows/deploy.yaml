@@ -18,7 +18,7 @@ jobs:
                
     - name: Download YAML File
       env:
-        PAT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PAT_TOKEN: ${{ secrets.BEOM_GITHUB_TOKEN }}
       run: |
         curl -H "Authorization: token $PAT_TOKEN" -H "Accept: application/vnd.github.v3.raw" -o ./producer-properties.yaml https://raw.githubusercontent.com/beom-project/beom-properties/main/producer-properties.yaml
       
@@ -32,11 +32,8 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         
     - name: Build and push
-      run: docker buildx build --tag ${{ $DOCKER_USERNAME }}/krx-stock-kafka-producer:latest --file Dockerfile . --push
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: docker buildx build --tag ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest --file Dockerfile . --push
           
     - name: Push the Docker image
-      run: docker push ${{ DOCKER_USERNAME }}/krx-stock-kafka-producer:latest
-      env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest
+  
