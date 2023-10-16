@@ -21,7 +21,10 @@ jobs:
         PAT_TOKEN: ${{ secrets.BEOM_GITHUB_TOKEN }}
       run: |
         curl -H "Authorization: token $PAT_TOKEN" -H "Accept: application/vnd.github.v3.raw" -o ./producer-properties.yaml https://raw.githubusercontent.com/beom-project/beom-properties/main/producer-properties.yaml
-      
+    
+    - name: check work dir
+      run: ls -l
+       
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
       
@@ -32,8 +35,10 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         
     - name: Build and push
-      run: docker buildx build --tag ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest --file Dockerfile . --push
-          
+      run: |
+        docker buildx create --use
+        docker buildx build --tag ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest --file Dockerfile . --push
+        
     - name: Push the Docker image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/krx-stock-kafka-producer:latest
   
