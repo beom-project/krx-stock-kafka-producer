@@ -42,8 +42,8 @@ COPY --from=builder /usr/share/zoneinfo/Asia/Seoul /usr/share/zoneinfo/Asia/Seou
 ENV TZ=Asia/Seoul
 
 # 바이너리 파일 복사
-COPY --from=builder /dist/main .
-COPY  ./producer-properties.yaml .
+COPY --from=builder /build/main /main
+COPY  producer-properties.yaml .
 
 # 애플리케이션 실행
 ENTRYPOINT ["/main"]
