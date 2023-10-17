@@ -1,10 +1,5 @@
 FROM golang:1.19 AS builder
 
-RUN apk --no-cache add tzdata && \
-	cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-	echo "Asia/Seoul" > /etc/timezone \
-	apk del tzdata
-
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
@@ -19,6 +14,10 @@ RUN openssl s_client -showcerts -connect github.com:443 </dev/null 2>/dev/null|o
 RUN openssl s_client -showcerts -connect proxy.golang.org:443 </dev/null 2>/dev/null|openssl x509 -outform PEM >  ${cert_location}/proxy.golang.crt
 # Update certificates
 RUN update-ca-certificates
+
+RUN apt-get update && apt-get install -y tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
 
 COPY . ./
 
@@ -36,4 +35,3 @@ FROM scratch
 COPY --from=builder /dist/main .
 COPY  ./producer-properties.yaml .
 ENTRYPOINT ["/main"]
-
