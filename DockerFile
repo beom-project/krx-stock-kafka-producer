@@ -1,5 +1,7 @@
+# Stage 1: Build the Golang application
 FROM golang:1.19 AS builder
 
+# 환경 변수 설정
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
@@ -15,8 +17,10 @@ RUN openssl s_client -showcerts -connect proxy.golang.org:443 </dev/null 2>/dev/
 # Update certificates
 RUN update-ca-certificates
 
+# Timezone 설정
 RUN apt-get update && apt-get install -y tzdata && \
-    ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone && \
     dpkg-reconfigure --frontend noninteractive tzdata
 
 COPY . ./
@@ -27,11 +31,19 @@ RUN go mod tidy
 
 RUN go build -o main .
 
-WORKDIR /dist
-
-RUN cp /build/main .
+# Stage 2: Create a minimal image for running the application
 FROM scratch
 
+# 복사한 파일 중에는 SSL/TLS 인증서 파일이 있어야합니다. 애플리케이션이 HTTPS를 사용한다면 필요합니다.
+# COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Timezone 설정
+COPY --from=builder /usr/share/zoneinfo/Asia/Seoul /usr/share/zoneinfo/Asia/Seoul
+ENV TZ=Asia/Seoul
+
+# 바이너리 파일 복사
 COPY --from=builder /dist/main .
 COPY  ./producer-properties.yaml .
+
+# 애플리케이션 실행
 ENTRYPOINT ["/main"]
