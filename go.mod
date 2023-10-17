@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/IBM/sarama v1.41.2
-	github.com/beomsun1234/krx-stock-collector v0.0.0-20231013140632-5c1f51d6dd28
+	github.com/beomsun1234/krx-stock-collector v0.0.0-20231017112631-bfcc98a031c4
 	gopkg.in/yaml.v2 v2.2.2
 )
 
