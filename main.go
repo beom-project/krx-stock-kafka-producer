@@ -48,6 +48,7 @@ func main() {
 		}
 
 		if !isBusinessDay(businessDay, now) {
+			time.Sleep(time.Hour * 3)
 			continue
 		}
 
