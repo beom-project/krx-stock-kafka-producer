@@ -59,14 +59,15 @@ func main() {
 		if collected_stock_prices == nil {
 			continue
 		}
-
+		
+		fmt.Println(collected_stock_prices)
+		
 		_, _, err = producer.SendMessage(generateMessage(collected_stock_prices, p.KafkaProperties.Topic))
 		if err != nil {
 			fmt.Println("Message sent failed")
+			time.Sleep(time.Duration(rand.Intn(4-2)+2) * time.Second)
 			continue
 		}
-
-		fmt.Println(collected_stock_prices)
 		fmt.Println("Message sent successfully")
 		fmt.Println("------------end----------------------------------------------------------------------------")
 		time.Sleep(time.Duration(rand.Intn(4-2)+2) * time.Second)
