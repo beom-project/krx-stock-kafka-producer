@@ -44,19 +44,31 @@ func main() {
 
 		businessDay, err := k.GetBusinessDay()
 		if err != nil {
+			fmt.Println(err)
+			delay(time.Minute * 30)
 			continue
 		}
 
 		if !isBusinessDay(businessDay, now) {
-			time.Sleep(time.Hour * 3)
+			fmt.Println("현재 영업일이 아닙니다.")
+			delay(time.Hour * 3)
 			continue
 		}
 
-		time.Sleep(time.Second)
+		delay(time.Second)
 
 		fmt.Println("------------start------------------------------------------------------------------------")
+		
 		collected_stock_prices := k.GetMarketPriceByDate(businessDay)
 		if collected_stock_prices == nil {
+			fmt.Println("krx data nil")
+			delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
+			continue
+		}
+
+		if !checkColumn(collected_stock_prices[0].ClosePrice) {
+			fmt.Println("잘못된 형식입니다. 메시지를 전송하지 않습니다.")
+			fmt.Println("------------end----------------------------------------------------------------------------")
 			continue
 		}
 		
@@ -65,12 +77,13 @@ func main() {
 		_, _, err = producer.SendMessage(generateMessage(collected_stock_prices, p.KafkaProperties.Topic))
 		if err != nil {
 			fmt.Println("Message sent failed")
-			time.Sleep(time.Duration(rand.Intn(4-2)+2) * time.Second)
+			delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
 			continue
 		}
+		
 		fmt.Println("Message sent successfully")
 		fmt.Println("------------end----------------------------------------------------------------------------")
-		time.Sleep(time.Duration(rand.Intn(4-2)+2) * time.Second)
+		delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
 	}
 
 }
@@ -103,6 +116,11 @@ func isBusinessDay(businessDay string, timeInKorea time.Time) bool {
 	return now == businessDay
 }
 
+func checkColumn(column string) bool {
+	return column != "KOSPI"
+
+}
+
 func generateMessage(data []krx.Stock, topic string) *sarama.ProducerMessage {
 	msg, _ := json.Marshal(data)
 
@@ -111,3 +129,8 @@ func generateMessage(data []krx.Stock, topic string) *sarama.ProducerMessage {
 		Value: sarama.ByteEncoder(msg),
 	}
 }
+
+func delay(delayTime time.Duration) {
+	time.Sleep(delayTime)
+}
+
