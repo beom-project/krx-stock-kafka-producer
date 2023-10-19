@@ -57,22 +57,26 @@ func main() {
 
 		delay(time.Second)
 
-		fmt.Println("------------start------------------------------------------------------------------------")
-		
 		collected_stock_prices := k.GetMarketPriceByDate(businessDay)
 		if collected_stock_prices == nil {
 			fmt.Println("krx data nil")
-			delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
+			delay(2 * time.Second)
 			continue
 		}
 
 		if !checkColumn(collected_stock_prices[0].ClosePrice) {
 			fmt.Println("잘못된 형식입니다. 메시지를 전송하지 않습니다.")
-			fmt.Println("------------end----------------------------------------------------------------------------")
+			delay(2 * time.Second)
 			continue
 		}
 		
+		fmt.Println("------------start------------------------------------------------------------------------")
+		
 		fmt.Println(collected_stock_prices)
+
+		fmt.Println("------------end----------------------------------------------------------------------------")
+
+		fmt.Printf("now : %s  |   business day : %s \n", now, businessDay)
 		
 		_, _, err = producer.SendMessage(generateMessage(collected_stock_prices, p.KafkaProperties.Topic))
 		if err != nil {
@@ -82,7 +86,7 @@ func main() {
 		}
 		
 		fmt.Println("Message sent successfully")
-		fmt.Println("------------end----------------------------------------------------------------------------")
+		
 		delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
 	}
 
