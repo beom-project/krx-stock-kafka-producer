@@ -9,11 +9,19 @@ import (
 
 type Properties struct {
 	KafkaProperties KafkaProperties `yaml:"kafka"`
+	MysqlProperties MysqlProperties `yaml:"mysql"`
 }
 
 type KafkaProperties struct {
 	Addrs []string `yaml:"addrs"`
 	Topic string   `yaml:"topic"`
+}
+
+type MysqlProperties struct {
+	Addr     string `yaml:"addr"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
 }
 
 func NewProperties() *Properties {
@@ -23,6 +31,7 @@ func NewProperties() *Properties {
 func (p *Properties) SetProperties(file_name string) {
 	properties := convertYamlToProperties(file_name)
 	p.KafkaProperties = properties.KafkaProperties
+	p.MysqlProperties = properties.MysqlProperties
 }
 
 func convertYamlToProperties(file_name string) *Properties {
