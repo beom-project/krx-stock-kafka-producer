@@ -143,7 +143,7 @@ func generateNowInKorea() time.Time {
 func isWithinTimeRange(timeInKorea time.Time) bool {
 	// 시작 시간과 종료 시간 설정
 	startTime := time.Date(timeInKorea.Year(), timeInKorea.Month(), timeInKorea.Day(), 9, 20, 0, 0, location)
-	endTime := time.Date(timeInKorea.Year(), timeInKorea.Month(), timeInKorea.Day(), 15, 23, 0, 0, location)
+	endTime := time.Date(timeInKorea.Year(), timeInKorea.Month(), timeInKorea.Day(), 15, 51, 0, 0, location)
 	// 현재 시간이 시작 시간과 종료 시간 사이에 있는지 확인
 	return timeInKorea.After(startTime) && timeInKorea.Before(endTime)
 }
@@ -221,7 +221,7 @@ func (c *Checker) setNextEndBusinessTime(now time.Time) {
 }
 
 func getEndBusinessTime(now time.Time) time.Time {
-	return time.Date(now.Year(), now.Month(), now.Day(), 15, 22, 0, 0, location)
+	return time.Date(now.Year(), now.Month(), now.Day(), 15, 50, 0, 0, location)
 }
 
 func bulkInsertStocks(data []krx.Stock, businessDay string) {
