@@ -119,16 +119,13 @@ func main() {
 
 		fmt.Printf("now : %s  |   business day : %s \n", now, businessDay)
 
-		go saveStockOnceADay(now, collected_stock_prices, businessDay)
-
 		_, _, err = producer.SendMessage(generateMessage(collected_stock_prices, p.KafkaProperties.Topic))
 		if err != nil {
-			fmt.Println("Message sent failed")
-			delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
-			continue
+			fmt.Println("Message sent failed, err = ", err)
+		} else {
+			fmt.Println("Message sent successfully")
 		}
-
-		fmt.Println("Message sent successfully")
+		saveStockOnceADay(now, collected_stock_prices, businessDay)
 
 		delay(time.Duration(rand.Intn(4-2)+2) * time.Second)
 	}
@@ -183,6 +180,8 @@ func saveStockOnceADay(now time.Time, data []krx.Stock, businessDay string) {
 	if c == 0 {
 		c = n
 	}
+
+	fmt.Println("checker = ", c, ", now = ", n)
 
 	if c != n {
 		return
