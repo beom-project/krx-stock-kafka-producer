@@ -92,6 +92,8 @@ func main() {
 
 		if !isBusinessDay(businessDay, now) {
 			fmt.Println("현재 영업일이 아닙니다.")
+			//영업일이 아닐경우 checker 초기화
+			checker.I.Swap(0)
 			delay(time.Hour * 3)
 			continue
 		}
