@@ -84,11 +84,8 @@ func main() {
 	for {
 		now := generateNowInKorea()
 		if !isWithinTimeRange(now) {
-			continue
-		}
-
-		if isEndBusinessTime(now) {
 			businessDay = "0"
+			continue
 		}
 
 		businessDay, err = getBusinessDay()
