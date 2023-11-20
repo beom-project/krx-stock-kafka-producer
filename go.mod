@@ -4,7 +4,8 @@ go 1.19
 
 require (
 	github.com/IBM/sarama v1.41.2
-	github.com/beomsun1234/krx-stock-collector v0.0.0-20231017112631-bfcc98a031c4
+	github.com/beomsun1234/krx-stock-collector v0.0.0-20231120005015-ed3055172a70
+	github.com/go-sql-driver/mysql v1.7.1
 	gopkg.in/yaml.v2 v2.2.2
 )
 
@@ -13,7 +14,6 @@ require (
 	github.com/eapache/go-resiliency v1.4.0 // indirect
 	github.com/eapache/go-xerial-snappy v0.0.0-20230731223053-c322873962e3 // indirect
 	github.com/eapache/queue v1.1.0 // indirect
-	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
