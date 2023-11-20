@@ -24,13 +24,18 @@ type Checker struct {
 }
 
 var (
-	location *time.Location
-	checker  *Checker
-	db       *sql.DB
+	location    *time.Location
+	checker     *Checker
+	db          *sql.DB
+	businessDay string
+	k           *krx.Krx
 )
 
 func main() {
 	var error error
+
+	//init businessDay
+	businessDay = "0"
 
 	p := properties.NewProperties()
 	p.SetProperties("producer-properties.yaml")
@@ -43,7 +48,6 @@ func main() {
 
 	fmt.Println("db 연결 성공")
 	defer db.Close()
-
 	// See "Important settings" section.
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
@@ -51,7 +55,7 @@ func main() {
 
 	checker = &Checker{atomic.Uint32{}}
 
-	k := krx.New(&http.Client{})
+	k = krx.New(&http.Client{})
 
 	location, error = time.LoadLocation("Asia/Seoul")
 	if error != nil {
@@ -83,10 +87,14 @@ func main() {
 			continue
 		}
 
-		businessDay, err := k.GetBusinessDay()
+		if isEndBusinessTime(now) {
+			businessDay = "0"
+		}
+
+		businessDay, err = getBusinessDay()
 		if err != nil {
 			fmt.Println(err)
-			delay(time.Minute * 30)
+			delay(time.Minute * 5)
 			continue
 		}
 
@@ -94,6 +102,7 @@ func main() {
 			fmt.Println("현재 영업일이 아닙니다.")
 			//영업일이 아닐경우 checker 초기화
 			checker.I.Swap(0)
+			businessDay = "0"
 			delay(time.Hour * 3)
 			continue
 		}
@@ -145,6 +154,22 @@ func isWithinTimeRange(timeInKorea time.Time) bool {
 	endTime := time.Date(timeInKorea.Year(), timeInKorea.Month(), timeInKorea.Day(), 15, 51, 0, 0, location)
 	// 현재 시간이 시작 시간과 종료 시간 사이에 있는지 확인
 	return timeInKorea.After(startTime) && timeInKorea.Before(endTime)
+}
+
+func getBusinessDay() (string, error) {
+	var err error
+
+	if businessDay != "0" && businessDay != "" {
+		return businessDay, nil
+	}
+
+	businessDay, err = k.GetBusinessDay()
+	if err != nil {
+		businessDay = "0"
+		return "", err
+	}
+
+	return businessDay, nil
 }
 
 func isBusinessDay(businessDay string, timeInKorea time.Time) bool {
