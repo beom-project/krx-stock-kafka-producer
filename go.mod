@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/IBM/sarama v1.41.2
-	github.com/beomsun1234/krx-stock-collector v0.0.0-20231120005015-ed3055172a70
+	github.com/beomsun1234/krx-stock-collector v0.0.0-20231120010110-2fcfe4a23e9c
 	github.com/go-sql-driver/mysql v1.7.1
 	gopkg.in/yaml.v2 v2.2.2
 )
