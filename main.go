@@ -91,7 +91,7 @@ func main() {
 		businessDay, err = getBusinessDay()
 		if err != nil {
 			fmt.Println(err)
-			delay(time.Minute * 5)
+			delay(2 * time.Second)
 			continue
 		}
 
